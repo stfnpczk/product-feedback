@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/* Design tokens from the Figma "Design System" frame */
+@theme {
+  --color-purple: #ad1fea;
+  --color-purple-hover: #c75af6;
+  --color-blue: #4661e6;
+  --color-blue-hover: #7c91f9;
+  --color-navy-dark: #373f68;
+  --color-navy: #3a4374;
+  --color-navy-hover: #656ea3;
+  --color-slate: #647196;
+  --color-lavender: #f2f4ff;
+  --color-ghost: #f7f8fd;
+  --color-peach: #f49f85;
+  --color-sky: #62bcfa;
+  --color-red: #d73737;
+  --color-red-hover: #e98888;
+
+  --text-h1: 1.5rem;
+  --text-h1--line-height: 2.1875rem;
+  --text-h1--letter-spacing: -0.33px;
+  --text-h1--font-weight: 700;
+  --text-h2: 1.25rem;
+  --text-h2--line-height: 1.8125rem;
+  --text-h2--letter-spacing: -0.25px;
+  --text-h2--font-weight: 700;
+  --text-h3: 1.125rem;
+  --text-h3--line-height: 1.625rem;
+  --text-h3--letter-spacing: -0.25px;
+  --text-h3--font-weight: 700;
+  --text-h4: 0.875rem;
+  --text-h4--line-height: 1.25rem;
+  --text-h4--letter-spacing: -0.2px;
+  --text-h4--font-weight: 700;
+  --text-body-1: 1rem;
+  --text-body-1--line-height: 1.4375rem;
+  --text-body-2: 0.9375rem;
+  --text-body-2--line-height: 1.375rem;
+  --text-body-3: 0.8125rem;
+  --text-body-3--line-height: 1.1875rem;
+  --text-body-3--font-weight: 600;
+}
+
+@theme inline {
+  --font-sans: var(--font-jost);
+}
+
+@layer base {
+  body {
+    @apply bg-ghost text-body-2 text-slate;
+  }
+}

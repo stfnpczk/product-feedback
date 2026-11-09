@@ -20,6 +20,28 @@
 
   --shadow-dropdown: 0 10px 40px -7px rgb(55 63 104 / 0.35);
 
+  --animate-count-in: count-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-count-out: count-out 200ms ease-in forwards;
+  --animate-nudge: nudge 350ms ease-out;
+
+  @keyframes count-in {
+    from {
+      translate: 0 calc(var(--dir) * 100%);
+    }
+  }
+
+  @keyframes count-out {
+    to {
+      translate: 0 calc(var(--dir) * -100%);
+    }
+  }
+
+  @keyframes nudge {
+    40% {
+      translate: 0 calc(var(--dir) * -3px);
+    }
+  }
+
   --text-h1: 1.5rem;
   --text-h1--line-height: 2.1875rem;
   --text-h1--letter-spacing: -0.33px;

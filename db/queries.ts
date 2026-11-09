@@ -1,12 +1,36 @@
-import { and, asc, count, desc, eq, ne, type SQL } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  exists,
+  ne,
+  type SQL,
+  sql,
+} from "drizzle-orm";
 import { cacheTag } from "next/cache";
+import { CURRENT_USERNAME } from "@/lib/current-user";
 import type { Sort, SuggestionFilters } from "@/lib/suggestion-filters";
 import { db } from "./index";
-import { comments, feedback, statusEnum } from "./schema";
+import { comments, feedback, statusEnum, users, votes } from "./schema";
 
 export const FEEDBACK_TAG = "feedback";
 
 const commentCount = count(comments.id);
+
+const upvoted = sql<boolean>`${exists(
+  db
+    .select({ one: sql`1` })
+    .from(votes)
+    .innerJoin(users, eq(users.id, votes.userId))
+    .where(
+      and(
+        eq(votes.feedbackId, feedback.id),
+        eq(users.username, CURRENT_USERNAME),
+      ),
+    ),
+)}`;
 
 const orderBy: Record<Sort, SQL[]> = {
   "most-upvotes": [desc(feedback.upvotes)],
@@ -26,6 +50,7 @@ export async function getSuggestions({ sort, category }: SuggestionFilters) {
       description: feedback.description,
       category: feedback.category,
       upvotes: feedback.upvotes,
+      upvoted,
       commentCount,
     })
     .from(feedback)

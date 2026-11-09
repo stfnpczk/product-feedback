@@ -27,6 +27,8 @@
   --animate-count-in: count-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
   --animate-count-out: count-out 200ms ease-in forwards;
   --animate-nudge: nudge 350ms ease-out;
+  --animate-bar-draw: bar-draw 1000ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-bar-sweep: bar-sweep 4000ms cubic-bezier(0.22, 1, 0.36, 1);
 
   @keyframes count-in {
     from {
@@ -37,6 +39,24 @@
   @keyframes count-out {
     to {
       translate: 0 calc(var(--dir) * -100%);
+    }
+  }
+
+  @keyframes bar-draw {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0);
+    }
+  }
+
+  @keyframes bar-sweep {
+    from {
+      translate: -100%;
+    }
+    to {
+      translate: 300%;
     }
   }
 

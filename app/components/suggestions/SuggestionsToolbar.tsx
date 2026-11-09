@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { SuggestionFilters } from "@/lib/suggestion-filters";
-import { AddFeedbackLink } from "./AddFeedbackLink";
+import { AddFeedbackLink } from "../shared/AddFeedbackLink";
 import { SortSelect } from "./SortSelect";
 
 export function SuggestionsToolbar({

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { AddFeedbackLink } from "./AddFeedbackLink";
+import { AddFeedbackLink } from "../shared/AddFeedbackLink";
 
 export function EmptyState() {
   return (

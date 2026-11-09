@@ -11,9 +11,10 @@ import {
 } from "drizzle-orm";
 import { cacheTag } from "next/cache";
 import { CURRENT_USERNAME } from "@/lib/current-user";
+import type { RoadmapStatus } from "@/lib/statuses";
 import type { Sort, SuggestionFilters } from "@/lib/suggestion-filters";
 import { db } from "./index";
-import { comments, feedback, statusEnum, users, votes } from "./schema";
+import { comments, feedback, users, votes } from "./schema";
 
 export const FEEDBACK_TAG = "feedback";
 
@@ -44,26 +45,31 @@ const feedbackSummaryFields = {
   title: feedback.title,
   description: feedback.description,
   category: feedback.category,
+  status: feedback.status,
   upvotes: feedback.upvotes,
   upvoted,
   commentCount,
 };
 
-export async function getSuggestions({ sort, category }: SuggestionFilters) {
-  "use cache";
-  cacheTag(FEEDBACK_TAG);
-
+function selectFeedbackSummaries() {
   return db
     .select(feedbackSummaryFields)
     .from(feedback)
     .leftJoin(comments, eq(comments.feedbackId, feedback.id))
+    .groupBy(feedback.id);
+}
+
+export async function getSuggestions({ sort, category }: SuggestionFilters) {
+  "use cache";
+  cacheTag(FEEDBACK_TAG);
+
+  return selectFeedbackSummaries()
     .where(
       and(
         eq(feedback.status, "suggestion"),
         category === "all" ? undefined : eq(feedback.category, category),
       ),
     )
-    .groupBy(feedback.id)
     .orderBy(...orderBy[sort], asc(feedback.id));
 }
 
@@ -75,12 +81,7 @@ export async function getFeedback(id: number) {
   "use cache";
   cacheTag(FEEDBACK_TAG);
 
-  const [row] = await db
-    .select({ ...feedbackSummaryFields, status: feedback.status })
-    .from(feedback)
-    .leftJoin(comments, eq(comments.feedbackId, feedback.id))
-    .where(eq(feedback.id, id))
-    .groupBy(feedback.id);
+  const [row] = await selectFeedbackSummaries().where(eq(feedback.id, id));
   return row;
 }
 
@@ -129,11 +130,6 @@ function nestComments(rows: CommentData[]): CommentNode[] {
   return [...topLevel.values()];
 }
 
-type RoadmapStatus = Exclude<
-  (typeof statusEnum.enumValues)[number],
-  "suggestion"
->;
-
 export async function getRoadmapCounts() {
   "use cache";
   cacheTag(FEEDBACK_TAG);
@@ -153,4 +149,23 @@ export async function getRoadmapCounts() {
     if (status !== "suggestion") counts[status] = count;
   }
   return counts;
+}
+
+export async function getRoadmapFeedback() {
+  "use cache";
+  cacheTag(FEEDBACK_TAG);
+
+  const rows = await selectFeedbackSummaries()
+    .where(ne(feedback.status, "suggestion"))
+    .orderBy(desc(feedback.upvotes), asc(feedback.id));
+
+  const board: Record<RoadmapStatus, FeedbackSummary[]> = {
+    planned: [],
+    "in-progress": [],
+    live: [],
+  };
+  for (const row of rows) {
+    if (row.status !== "suggestion") board[row.status].push(row);
+  }
+  return board;
 }

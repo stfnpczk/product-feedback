@@ -216,7 +216,7 @@ export function FeedbackForm(props: FeedbackFormProps) {
           )}
           <Link
             href={returnHref}
-            onClick={handleCancel}
+            onNavigate={handleCancel}
             className={buttonStyles("tertiary")}
           >
             Cancel

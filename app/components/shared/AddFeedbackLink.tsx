@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { buttonStyles } from "../shared/button-styles";
+import { buttonStyles } from "./button-styles";
 
 export function AddFeedbackLink({ className = "" }: { className?: string }) {
   return (

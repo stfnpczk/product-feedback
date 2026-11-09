@@ -16,7 +16,7 @@ export function SuggestionsToolbar({
       : `${count} ${count === 1 ? "Suggestion" : "Suggestions"}`;
 
   return (
-    <div className="flex h-14 items-center bg-navy-dark px-6 text-lavender md:h-18 md:gap-9.5 md:rounded-[10px] md:pr-3 lg:pr-4">
+    <div className="flex h-14 items-center bg-navy-dark px-6 text-lavender md:h-18 md:gap-9.5 md:rounded-card md:pr-3 lg:pr-4">
       <h1 className="sr-only md:not-sr-only md:flex md:items-center md:gap-4 md:text-h3 md:text-white">
         <Image
           src="/assets/suggestions/icon-suggestions.svg"

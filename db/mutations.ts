@@ -1,7 +1,7 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { CURRENT_USERNAME } from "@/lib/current-user";
 import { db } from "./index";
-import { feedback, users, votes } from "./schema";
+import { comments, feedback, users, votes } from "./schema";
 
 const currentUserId = db
   .select({ id: users.id })
@@ -44,4 +44,33 @@ export async function saveUpvote(feedbackId: number, upvoted: boolean) {
     .where(
       inArray(feedback.id, db.select({ id: changed.feedbackId }).from(changed)),
     );
+}
+
+export async function insertComment(feedbackId: number, content: string) {
+  await db.insert(comments).values({
+    feedbackId,
+    userId: sql`(${currentUserId})`,
+    content,
+  });
+}
+
+export async function insertReply(targetCommentId: number, content: string) {
+  const [target] = await db
+    .select({
+      feedbackId: comments.feedbackId,
+      parentId: sql<number>`coalesce(${comments.parentId}, ${comments.id})`,
+      replyingTo: users.username,
+    })
+    .from(comments)
+    .innerJoin(users, eq(users.id, comments.userId))
+    .where(eq(comments.id, targetCommentId));
+
+  if (!target) return false;
+
+  await db.insert(comments).values({
+    ...target,
+    userId: sql`(${currentUserId})`,
+    content,
+  });
+  return true;
 }

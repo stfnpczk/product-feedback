@@ -10,6 +10,7 @@
   --color-navy: #3a4374;
   --color-navy-hover: #656ea3;
   --color-slate: #647196;
+  --color-steel: #8c92b3;
   --color-lavender: #f2f4ff;
   --color-lavender-hover: #cfd7ff;
   --color-ghost: #f7f8fd;
@@ -17,6 +18,9 @@
   --color-sky: #62bcfa;
   --color-red: #d73737;
   --color-red-hover: #e98888;
+
+  --radius-card: 10px;
+  --radius-field: 5px;
 
   --shadow-dropdown: 0 10px 40px -7px rgb(55 63 104 / 0.35);
 

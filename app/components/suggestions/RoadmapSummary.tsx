@@ -24,7 +24,7 @@ function RoadmapSummaryCard({
   return (
     <section
       aria-labelledby={titleId}
-      className="rounded-[10px] bg-white px-6 pt-4.75 pb-6 text-slate"
+      className="rounded-card bg-white px-6 pt-4.75 pb-6 text-slate"
     >
       <div className="flex items-center justify-between">
         <h2 id={titleId} className="text-h3 text-navy">

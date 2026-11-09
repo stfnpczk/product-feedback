@@ -24,7 +24,7 @@ export async function CategoryFilter({
   return (
     <nav
       aria-label="Filter by category"
-      className="min-h-44.5 rounded-[10px] bg-white p-6 lg:min-h-0"
+      className="min-h-44.5 rounded-card bg-white p-6 lg:min-h-0"
     >
       <ul className="flex flex-wrap gap-x-2 gap-y-3.5">
         {options.map(({ value, label }) => {
@@ -37,7 +37,7 @@ export async function CategoryFilter({
                   sort: current?.sort ?? defaultSort,
                 })}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex h-7.5 items-center rounded-[10px] px-4 text-body-3 transition-colors ${
+                className={`flex h-7.5 items-center rounded-card px-4 text-body-3 transition-colors ${
                   isActive
                     ? "bg-blue text-white"
                     : "bg-lavender text-blue hover:bg-lavender-hover"

@@ -3,7 +3,7 @@ import { AddFeedbackLink } from "./AddFeedbackLink";
 
 export function EmptyState() {
   return (
-    <div className="mx-6 mt-8 flex flex-col items-center rounded-[10px] bg-white px-6 py-19 text-center md:mx-0 md:mt-6 md:min-h-150 md:justify-center md:py-14">
+    <div className="mx-6 mt-8 flex flex-col items-center rounded-card bg-white px-6 py-19 text-center md:mx-0 md:mt-6 md:min-h-150 md:justify-center md:py-14">
       <Image
         src="/assets/suggestions/illustration-empty.svg"
         alt=""

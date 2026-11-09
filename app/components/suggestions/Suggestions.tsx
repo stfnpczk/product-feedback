@@ -1,8 +1,8 @@
 import { getSuggestions } from "@/db/queries";
 import type { SuggestionFilters } from "@/lib/suggestion-filters";
+import { FeedbackCard } from "../shared/FeedbackCard";
+import { FeedbackCardSkeleton } from "../shared/FeedbackCardSkeleton";
 import { EmptyState } from "./EmptyState";
-import { SuggestionCard } from "./SuggestionCard";
-import { SuggestionCardSkeleton } from "./SuggestionCardSkeleton";
 import { SuggestionsToolbar } from "./SuggestionsToolbar";
 
 const listClasses = "mx-6 mt-8 flex flex-col gap-4 md:mx-0 md:mt-6 lg:gap-5";
@@ -27,7 +27,10 @@ export async function Suggestions({
         <ul className={listClasses}>
           {suggestions.map((suggestion) => (
             <li key={suggestion.id}>
-              <SuggestionCard suggestion={suggestion} />
+              <FeedbackCard
+                feedback={suggestion}
+                href={`/feedback/${suggestion.id}`}
+              />
             </li>
           ))}
         </ul>
@@ -45,7 +48,7 @@ export function SuggestionsFallback() {
       </p>
       <div className={listClasses}>
         {Array.from({ length: 3 }, (_, i) => (
-          <SuggestionCardSkeleton key={i} />
+          <FeedbackCardSkeleton key={i} />
         ))}
       </div>
     </>

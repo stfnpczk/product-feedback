@@ -9,7 +9,10 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "Product Feedback App",
+  title: {
+    default: "Product Feedback App",
+    template: "%s | Product Feedback App",
+  },
   description: "Frontend Mentor product feedback app",
   icons: { icon: "/assets/favicon-32x32.png" },
 };

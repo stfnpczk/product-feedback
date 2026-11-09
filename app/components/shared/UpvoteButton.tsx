@@ -49,7 +49,7 @@ export function UpvoteButton({
       aria-pressed={optimistic.upvoted}
       onClick={toggle}
       style={{ "--dir": bump.dir } as CSSProperties}
-      className={`group/upvote relative flex cursor-pointer items-center rounded-[10px] bg-lavender text-body-3 font-bold tracking-[-0.18px] text-navy transition-colors hover:bg-lavender-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue aria-pressed:bg-blue aria-pressed:text-white ${className}`}
+      className={`group/upvote relative flex cursor-pointer items-center rounded-card bg-lavender text-body-3 font-bold tracking-[-0.18px] text-navy transition-colors hover:bg-lavender-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue aria-pressed:bg-blue aria-pressed:text-white ${className}`}
     >
       <span
         key={`arrow-${bump.id}`}

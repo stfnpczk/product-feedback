@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { categories } from "./categories";
+import { statuses } from "./statuses";
 
 export const TITLE_MAX_LENGTH = 100;
 export const DESCRIPTION_MAX_LENGTH = 500;
@@ -18,29 +19,63 @@ export const feedbackInput = z.object({
   description: requiredText(DESCRIPTION_MAX_LENGTH),
 });
 
+export const feedbackUpdate = feedbackInput.extend({
+  status: z.enum(statuses, "Please choose a status"),
+});
+
 export type FeedbackInput = z.infer<typeof feedbackInput>;
-export type FeedbackField = keyof FeedbackInput;
+export type FeedbackUpdate = z.infer<typeof feedbackUpdate>;
+export type FeedbackField = keyof FeedbackUpdate;
 export type FieldErrors = Partial<Record<FeedbackField, string>>;
 
 export type FeedbackFormState =
   | { status: "idle" }
   | { status: "invalid"; fieldErrors: FieldErrors }
-  | { status: "error"; message: string };
+  | { status: "error"; message: string }
+  | { status: "success" };
 
 export const initialFeedbackFormState: FeedbackFormState = { status: "idle" };
 
-export function parseFeedbackForm(formData: FormData) {
-  const result = feedbackInput.safeParse({
-    title: formData.get("title") ?? "",
-    category: formData.get("category"),
-    description: formData.get("description") ?? "",
-  });
-  if (result.success) return { data: result.data } as const;
+export type ParsedFeedbackForm<T> =
+  | { data: T; fieldErrors?: undefined }
+  | { data?: undefined; fieldErrors: FieldErrors };
 
-  const { fieldErrors } = z.flattenError(result.error);
+function firstFieldErrors(error: z.ZodError): FieldErrors {
+  const { fieldErrors } = z.flattenError(error) as {
+    fieldErrors: Partial<Record<FeedbackField, string[]>>;
+  };
   const firstErrors: FieldErrors = {};
   for (const field of Object.keys(fieldErrors) as FeedbackField[]) {
     firstErrors[field] = fieldErrors[field]?.[0];
   }
-  return { fieldErrors: firstErrors } as const;
+  return firstErrors;
+}
+
+function readFields(formData: FormData) {
+  return {
+    title: formData.get("title") ?? "",
+    category: formData.get("category"),
+    description: formData.get("description") ?? "",
+  };
+}
+
+export function parseFeedbackForm(
+  formData: FormData,
+): ParsedFeedbackForm<FeedbackInput> {
+  const result = feedbackInput.safeParse(readFields(formData));
+  return result.success
+    ? { data: result.data }
+    : { fieldErrors: firstFieldErrors(result.error) };
+}
+
+export function parseFeedbackUpdate(
+  formData: FormData,
+): ParsedFeedbackForm<FeedbackUpdate> {
+  const result = feedbackUpdate.safeParse({
+    ...readFields(formData),
+    status: formData.get("status"),
+  });
+  return result.success
+    ? { data: result.data }
+    : { fieldErrors: firstFieldErrors(result.error) };
 }

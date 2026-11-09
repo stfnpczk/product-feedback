@@ -5,6 +5,7 @@ const variants = {
   primary: "bg-purple hover:bg-purple-hover",
   secondary: "bg-blue hover:bg-blue-hover",
   tertiary: "bg-navy hover:bg-navy-hover",
+  danger: "bg-red hover:bg-red-hover",
 };
 
 export function buttonStyles(variant: keyof typeof variants = "primary") {

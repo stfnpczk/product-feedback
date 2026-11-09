@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { useId } from "react";
 import { getRoadmapCounts } from "@/db/queries";
+import { statusLabels } from "@/lib/statuses";
 
-const statuses = [
-  { key: "planned", label: "Planned", dot: "bg-peach" },
-  { key: "in-progress", label: "In-Progress", dot: "bg-purple" },
-  { key: "live", label: "Live", dot: "bg-sky" },
+const roadmapStatuses = [
+  { key: "planned", dot: "bg-peach" },
+  { key: "in-progress", dot: "bg-purple" },
+  { key: "live", dot: "bg-sky" },
 ] as const;
 
 export async function RoadmapSummary() {
@@ -38,10 +39,10 @@ function RoadmapSummaryCard({
         </Link>
       </div>
       <ul className="mt-6 flex flex-col gap-2">
-        {statuses.map(({ key, label, dot }) => (
+        {roadmapStatuses.map(({ key, dot }) => (
           <li key={key} className="flex items-center gap-4 text-body-1">
             <span aria-hidden="true" className={`size-2 rounded-full ${dot}`} />
-            <span>{label}</span>
+            <span>{statusLabels[key]}</span>
             <span className="ml-auto font-bold">{counts[key]}</span>
           </li>
         ))}

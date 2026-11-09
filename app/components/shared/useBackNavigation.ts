@@ -33,3 +33,12 @@ export function useBackNavigation(href: string) {
     router.back();
   };
 }
+
+export function useNavigateBack(href: string) {
+  const router = useRouter();
+
+  return function navigateBack() {
+    if (previousEntryMatches(href)) router.back();
+    else router.replace(href);
+  };
+}

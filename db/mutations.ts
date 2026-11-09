@@ -1,6 +1,6 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { CURRENT_USERNAME } from "@/lib/current-user";
-import type { FeedbackInput } from "@/lib/feedback-form";
+import type { FeedbackInput, FeedbackUpdate } from "@/lib/feedback-form";
 import { db } from "./index";
 import { comments, feedback, users, votes } from "./schema";
 
@@ -82,4 +82,21 @@ export async function insertFeedback(input: FeedbackInput) {
     .values(input)
     .returning({ id: feedback.id });
   return created.id;
+}
+
+export async function updateFeedback(id: number, input: FeedbackUpdate) {
+  const updated = await db
+    .update(feedback)
+    .set(input)
+    .where(eq(feedback.id, id))
+    .returning({ id: feedback.id });
+  return updated.length > 0;
+}
+
+export async function deleteFeedback(id: number) {
+  const deleted = await db
+    .delete(feedback)
+    .where(eq(feedback.id, id))
+    .returning({ id: feedback.id });
+  return deleted.length > 0;
 }

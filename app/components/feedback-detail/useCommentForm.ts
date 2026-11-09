@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  type FormEvent,
+  type SubmitEvent,
   startTransition,
   useActionState,
   useRef,
@@ -33,7 +33,7 @@ export function useCommentForm(
   const error =
     state.status === "error" && dismissed !== state ? state.message : undefined;
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     startTransition(() => dispatch(formData));

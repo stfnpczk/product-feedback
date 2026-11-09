@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  type FormEvent,
+  type SubmitEvent,
   startTransition,
   useActionState,
   useState,
@@ -11,16 +11,32 @@ import {
   type FeedbackFormState,
   type FieldErrors,
   initialFeedbackFormState,
-  parseFeedbackForm,
+  type ParsedFeedbackForm,
 } from "@/lib/feedback-form";
 
-const fieldOrder: FeedbackField[] = ["title", "category", "description"];
+const fieldOrder: FeedbackField[] = [
+  "title",
+  "category",
+  "status",
+  "description",
+];
 
-export function useFeedbackForm(
-  submit: (formData: FormData) => Promise<FeedbackFormState>,
-  fieldId: (field: FeedbackField) => string,
-) {
+type UseFeedbackFormOptions = {
+  submit: (formData: FormData) => Promise<FeedbackFormState>;
+  parse: (formData: FormData) => ParsedFeedbackForm<unknown>;
+  fieldId: (field: FeedbackField) => string;
+  onSuccess?: () => void;
+};
+
+export function useFeedbackForm({
+  submit,
+  parse,
+  fieldId,
+  onSuccess,
+}: UseFeedbackFormOptions) {
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [succeeded, setSucceeded] = useState(false);
+  const [dismissed, setDismissed] = useState<FeedbackFormState | null>(null);
 
   function showErrors(fieldErrors: FieldErrors) {
     setErrors(fieldErrors);
@@ -32,16 +48,20 @@ export function useFeedbackForm(
     async (_prev: FeedbackFormState, formData: FormData) => {
       const result = await submit(formData);
       if (result.status === "invalid") showErrors(result.fieldErrors);
+      if (result.status === "success") {
+        setSucceeded(true);
+        onSuccess?.();
+      }
       return result;
     },
     initialFeedbackFormState,
   );
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const parsed = parseFeedbackForm(formData);
-    if (!parsed.data) {
+    const parsed = parse(formData);
+    if (parsed.fieldErrors) {
       showErrors(parsed.fieldErrors);
       return;
     }
@@ -53,8 +73,17 @@ export function useFeedbackForm(
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   }
 
-  const serverError =
-    state.status === "error" && !isPending ? state.message : undefined;
+  function reset() {
+    setErrors({});
+    setSucceeded(false);
+    setDismissed(state);
+  }
 
-  return { errors, serverError, isPending, handleSubmit, clearError };
+  const serverError =
+    state.status === "error" && !isPending && dismissed !== state
+      ? state.message
+      : undefined;
+  const isSaving = isPending || succeeded;
+
+  return { errors, serverError, isSaving, handleSubmit, clearError, reset };
 }

@@ -3,12 +3,12 @@ import { Suspense } from "react";
 import { FeedbackDetail } from "@/app/components/feedback-detail/FeedbackDetail";
 import { FeedbackDetailSkeleton } from "@/app/components/feedback-detail/FeedbackDetailSkeleton";
 import { getFeedback } from "@/db/queries";
-import { parseFeedbackId } from "@/lib/feedback-id";
+import { parseIdParam } from "@/lib/ids";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/feedback/[id]">): Promise<Metadata> {
-  const id = parseFeedbackId((await params).id);
+  const id = parseIdParam((await params).id);
   const feedback = id === null ? undefined : await getFeedback(id);
   return { title: feedback?.title ?? "Feedback not found" };
 }

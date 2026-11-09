@@ -3,7 +3,9 @@ import { readFileSync } from "node:fs";
 import { neon } from "@neondatabase/serverless";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/neon-http";
+import type { Category } from "../lib/categories.ts";
 import { CURRENT_USER } from "../lib/current-user.ts";
+import type { Status } from "../lib/statuses.ts";
 import * as schema from "./schema.ts";
 
 type SeedUser = { image: string; name: string; username: string };
@@ -17,8 +19,8 @@ type SeedComment = {
 type SeedFeedback = {
   id: number;
   title: string;
-  category: (typeof schema.categoryEnum.enumValues)[number];
-  status: (typeof schema.statusEnum.enumValues)[number];
+  category: Category;
+  status: Status;
   upvotes: number;
   description: string;
   comments?: SeedComment[];

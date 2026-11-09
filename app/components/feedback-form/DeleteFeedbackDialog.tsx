@@ -1,8 +1,9 @@
 "use client";
 
 import { startTransition, useActionState, useId, useRef } from "react";
-import type { DeleteFeedbackState } from "@/app/actions/feedback";
+import type { DeleteFeedbackState } from "@/lib/feedback-form";
 import { buttonStyles } from "../shared/button-styles";
+import { FormAlert } from "../shared/FormAlert";
 
 type DeleteFeedbackDialogProps = {
   title: string;
@@ -62,11 +63,9 @@ export function DeleteFeedbackDialog({
           ‘{title}’ and all its comments will be permanently deleted.
         </p>
 
-        {state.status === "error" && !isPending && (
-          <p role="alert" className="mt-4 text-sm text-red">
-            {state.message}
-          </p>
-        )}
+        <FormAlert className="mt-4">
+          {state.status === "error" && !isPending && state.message}
+        </FormAlert>
 
         <div className="mt-6 flex flex-col-reverse gap-4 md:flex-row md:justify-end">
           <button

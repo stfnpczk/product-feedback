@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useEffectEvent, useId, useRef, useState } from "react";
-import type { DeleteFeedbackState } from "@/app/actions/feedback";
+import { useId, useRef, useState } from "react";
 import { type Category, categories, categoryLabels } from "@/lib/categories";
 import {
+  type DeleteFeedbackState,
   DESCRIPTION_MAX_LENGTH,
   type FeedbackField,
   type FeedbackFormState,
@@ -17,14 +17,14 @@ import {
 import { type Status, statuses, statusLabels } from "@/lib/statuses";
 import { buttonStyles } from "../shared/button-styles";
 import { fieldStyles } from "../shared/field-styles";
-import { Select } from "../shared/Select";
-import {
-  useBackNavigation,
-  useNavigateBack,
-} from "../shared/useBackNavigation";
+import { useBackLink, useReturnTo } from "../shared/back-navigation";
+import { FormAlert } from "../shared/FormAlert";
+import { FieldSelect } from "../shared/Select";
 import { DeleteFeedbackDialog } from "./DeleteFeedbackDialog";
 import { FormField } from "./FormField";
+import { formCard, formCardIcon } from "./form-card-styles";
 import { useFeedbackForm } from "./useFeedbackForm";
+import { useResetWhenHidden } from "./useResetWhenHidden";
 
 const categoryOptions = categories.map((value) => ({
   value,
@@ -38,11 +38,11 @@ const statusOptions = statuses.map((value) => ({
 
 type FeedbackFormProps = {
   action: (formData: FormData) => Promise<FeedbackFormState>;
+  returnHref: string;
 } & (
   | { mode: "create" }
   | {
       mode: "edit";
-      feedbackId: number;
       defaultValues: FeedbackUpdate;
       deleteAction: () => Promise<DeleteFeedbackState>;
     }
@@ -51,7 +51,7 @@ type FeedbackFormProps = {
 export function FeedbackForm(props: FeedbackFormProps) {
   const isEdit = props.mode === "edit";
   const defaultValues = isEdit ? props.defaultValues : undefined;
-  const returnHref = isEdit ? `/feedback/${props.feedbackId}` : "/";
+  const { returnHref } = props;
 
   const id = useId();
   const fieldId = (field: FeedbackField) => `${id}-${field}`;
@@ -60,30 +60,24 @@ export function FeedbackForm(props: FeedbackFormProps) {
   const [statusChoice, setStatus] = useState<Status | null>(null);
   const category = categoryChoice ?? defaultValues?.category ?? "feature";
   const status = statusChoice ?? defaultValues?.status ?? "suggestion";
-  const navigateBack = useNavigateBack(returnHref);
+  const returnTo = useReturnTo(returnHref);
   const { errors, serverError, isSaving, handleSubmit, clearError, reset } =
     useFeedbackForm({
       submit: props.action,
       parse: isEdit ? parseFeedbackUpdate : parseFeedbackForm,
       fieldId,
-      onSuccess: navigateBack,
+      onSuccess: returnTo,
     });
-  const handleCancel = useBackNavigation(returnHref);
+  const handleCancel = useBackLink(returnHref);
 
-  const resetForm = useEffectEvent((form: HTMLFormElement | null) => {
-    form?.reset();
+  useResetWhenHidden(formRef, () => {
     setCategory(null);
     setStatus(null);
     reset();
   });
 
-  useEffect(() => {
-    const form = formRef.current;
-    return () => resetForm(form);
-  }, []);
-
   return (
-    <div className="mt-11 flow-root rounded-card bg-white px-6 pb-6 md:mt-14 md:px-10.5 md:pb-10">
+    <div className={formCard}>
       <Image
         src={
           isEdit
@@ -93,7 +87,7 @@ export function FeedbackForm(props: FeedbackFormProps) {
         alt=""
         width={56}
         height={56}
-        className="-mt-5 size-10 md:-mt-7 md:size-14"
+        className={formCardIcon}
       />
       <h1 className="mt-6 text-h3 text-navy md:text-h1">
         {defaultValues
@@ -136,8 +130,7 @@ export function FeedbackForm(props: FeedbackFormProps) {
             error={errors.category}
           >
             {(control) => (
-              <Select
-                variant="field"
+              <FieldSelect
                 id={control.id}
                 name="category"
                 labelledBy={control.labelId}
@@ -161,8 +154,7 @@ export function FeedbackForm(props: FeedbackFormProps) {
               error={errors.status}
             >
               {(control) => (
-                <Select
-                  variant="field"
+                <FieldSelect
                   id={control.id}
                   name="status"
                   labelledBy={control.labelId}
@@ -200,11 +192,7 @@ export function FeedbackForm(props: FeedbackFormProps) {
           </FormField>
         </div>
 
-        {serverError && (
-          <p role="alert" className="mt-6 text-sm text-red">
-            {serverError}
-          </p>
-        )}
+        <FormAlert className="mt-6">{serverError}</FormAlert>
 
         <div className="mt-10 flex flex-col-reverse gap-4 md:mt-8 md:flex-row md:justify-end">
           {isEdit && (

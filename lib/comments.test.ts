@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { COMMENT_MAX_LENGTH, commentContent } from "./comments";
+import {
+  COMMENT_MAX_LENGTH,
+  commentContent,
+  nestComments,
+  parseComment,
+} from "./comments";
 
 describe("commentContent", () => {
   it("trims surrounding whitespace", () => {
@@ -22,5 +27,56 @@ describe("commentContent", () => {
     expect(result.error?.issues[0].message).toBe(
       `Can't be longer than ${COMMENT_MAX_LENGTH} characters`,
     );
+  });
+});
+
+describe("parseComment", () => {
+  it("returns the trimmed content", () => {
+    expect(parseComment("  Nice idea  ")).toEqual({ data: "Nice idea" });
+  });
+
+  it("treats a missing value as empty", () => {
+    expect(parseComment(null)).toEqual({ error: "Can't be empty" });
+  });
+});
+
+describe("nestComments", () => {
+  it("groups replies under their parent, keeping order", () => {
+    const rows = [
+      { id: 1, parentId: null },
+      { id: 2, parentId: null },
+      { id: 3, parentId: 1 },
+      { id: 4, parentId: 2 },
+      { id: 5, parentId: 1 },
+    ];
+    expect(nestComments(rows)).toEqual([
+      {
+        id: 1,
+        parentId: null,
+        replies: [
+          { id: 3, parentId: 1 },
+          { id: 5, parentId: 1 },
+        ],
+      },
+      { id: 2, parentId: null, replies: [{ id: 4, parentId: 2 }] },
+    ]);
+  });
+
+  it("keeps a reply that arrives before its parent", () => {
+    const rows = [
+      { id: 2, parentId: 1 },
+      { id: 1, parentId: null },
+    ];
+    expect(nestComments(rows)).toEqual([
+      { id: 1, parentId: null, replies: [{ id: 2, parentId: 1 }] },
+    ]);
+  });
+
+  it("drops replies whose parent is missing", () => {
+    expect(nestComments([{ id: 2, parentId: 99 }])).toEqual([]);
+  });
+
+  it("returns an empty list for no rows", () => {
+    expect(nestComments([])).toEqual([]);
   });
 });

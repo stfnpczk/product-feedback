@@ -1,4 +1,5 @@
 import { getSuggestions } from "@/db/queries";
+import { feedbackHref } from "@/lib/routes";
 import type { SuggestionFilters } from "@/lib/suggestion-filters";
 import { FeedbackCard } from "../shared/FeedbackCard";
 import { FeedbackCardSkeleton } from "../shared/FeedbackCardSkeleton";
@@ -29,7 +30,7 @@ export async function Suggestions({
             <li key={suggestion.id}>
               <FeedbackCard
                 feedback={suggestion}
-                href={`/feedback/${suggestion.id}`}
+                href={feedbackHref(suggestion.id)}
               />
             </li>
           ))}

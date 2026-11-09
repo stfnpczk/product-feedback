@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "New Feedback" };
 export default function NewFeedbackPage() {
   return (
     <FormPage backHref="/">
-      <FeedbackForm mode="create" action={createFeedback} />
+      <FeedbackForm mode="create" returnHref="/" action={createFeedback} />
     </FormPage>
   );
 }

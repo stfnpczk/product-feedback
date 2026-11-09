@@ -1,6 +1,9 @@
-import { statusEnum } from "@/db/schema";
-
-export const statuses = statusEnum.enumValues;
+export const statuses = [
+  "suggestion",
+  "planned",
+  "in-progress",
+  "live",
+] as const;
 export type Status = (typeof statuses)[number];
 
 export const statusLabels: Record<Status, string> = {

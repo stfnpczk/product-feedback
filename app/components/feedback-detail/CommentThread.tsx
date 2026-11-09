@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { CommentNode } from "@/db/queries";
 import { Comment } from "./Comment";
 import { ReplyProvider } from "./ReplyProvider";
@@ -9,12 +10,14 @@ export function CommentThread({
   comments: CommentNode[];
   count: number;
 }) {
+  const headingId = useId();
+
   return (
     <section
-      aria-labelledby="comments-heading"
+      aria-labelledby={headingId}
       className="rounded-card bg-white p-6 md:px-8 md:pb-8 lg:pb-12"
     >
-      <h2 id="comments-heading" className="mb-6 text-h3 text-navy md:mb-7">
+      <h2 id={headingId} className="mb-6 text-h3 text-navy md:mb-7">
         {count} {count === 1 ? "Comment" : "Comments"}
       </h2>
       <ReplyProvider>

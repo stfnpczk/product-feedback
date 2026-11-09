@@ -46,7 +46,7 @@ export function RoadmapTabs({
                     event.preventDefault();
                     switchTab(status);
                   }}
-                  className={`flex h-full items-center justify-center text-body-3 font-bold tracking-[-0.18px] transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue ${
+                  className={`flex h-full items-center justify-center text-body-3-bold focus-ring transition-colors focus-ring-inset ${
                     isActive ? "text-navy" : "text-navy/40 hover:text-navy"
                   }`}
                 >

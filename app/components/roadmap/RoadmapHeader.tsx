@@ -8,7 +8,7 @@ export function RoadmapHeader() {
         <GoBackLink href="/" variant="onDark" />
         <h1 className="text-h3 text-white md:text-h1">Roadmap</h1>
       </div>
-      <AddFeedbackLink className="focus-visible:outline-white!" />
+      <AddFeedbackLink className="focus-ring-white" />
     </header>
   );
 }

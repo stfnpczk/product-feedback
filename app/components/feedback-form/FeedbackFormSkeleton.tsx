@@ -1,3 +1,5 @@
+import { formCard, formCardIcon } from "./form-card-styles";
+
 export function FeedbackFormSkeleton() {
   return (
     <>
@@ -6,9 +8,9 @@ export function FeedbackFormSkeleton() {
       </p>
       <div
         aria-hidden="true"
-        className="mt-11 flow-root animate-pulse rounded-card bg-white px-6 pb-6 motion-reduce:animate-none md:mt-14 md:px-10.5 md:pb-10"
+        className={`animate-pulse motion-reduce:animate-none ${formCard}`}
       >
-        <div className="-mt-5 size-10 rounded-full bg-lavender md:-mt-7 md:size-14" />
+        <div className={`rounded-full bg-lavender ${formCardIcon}`} />
         <div className="mt-6 h-6 w-3/4 rounded-full bg-lavender md:h-8" />
         <div className="mt-6 flex flex-col gap-6 md:mt-10">
           {Array.from({ length: 4 }, (_, i) => (

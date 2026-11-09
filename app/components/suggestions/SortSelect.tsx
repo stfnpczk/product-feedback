@@ -10,7 +10,7 @@ import {
   sortOptions,
   suggestionsHref,
 } from "@/lib/suggestion-filters";
-import { Select } from "../shared/Select";
+import { ToolbarSelect } from "../shared/Select";
 
 const options = sortOptions.map((value) => ({
   value,
@@ -21,7 +21,7 @@ export function SortSelect({ filters }: { filters?: SuggestionFilters }) {
   const router = useRouter();
   const [sort, setOptimisticSort] = useOptimistic(filters?.sort ?? defaultSort);
 
-  function onChange(next: Sort) {
+  function handleChange(next: Sort) {
     if (!filters) return;
     startTransition(() => {
       setOptimisticSort(next);
@@ -32,11 +32,11 @@ export function SortSelect({ filters }: { filters?: SuggestionFilters }) {
   }
 
   return (
-    <Select
+    <ToolbarSelect
       label="Sort by :"
       options={options}
       value={sort}
-      onChange={onChange}
+      onChange={handleChange}
       disabled={!filters}
     />
   );

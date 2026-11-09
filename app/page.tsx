@@ -1,13 +1,13 @@
 import { Suspense } from "react";
 import { parseSuggestionFilters } from "@/lib/suggestion-filters";
-import { pageContainer } from "./components/shared/layout-styles";
-import { CategoryFilter } from "./components/suggestions/CategoryFilter";
-import { Header } from "./components/suggestions/Header";
-import { RoadmapSummary } from "./components/suggestions/RoadmapSummary";
+import { pageContainer } from "@/app/components/shared/layout-styles";
+import { CategoryFilter } from "@/app/components/suggestions/CategoryFilter";
+import { Header } from "@/app/components/suggestions/Header";
+import { RoadmapSummary } from "@/app/components/suggestions/RoadmapSummary";
 import {
   Suggestions,
   SuggestionsFallback,
-} from "./components/suggestions/Suggestions";
+} from "@/app/components/suggestions/Suggestions";
 
 export default function SuggestionsPage({ searchParams }: PageProps<"/">) {
   const filters = searchParams.then(parseSuggestionFilters);

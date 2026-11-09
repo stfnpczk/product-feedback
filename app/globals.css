@@ -89,6 +89,18 @@
   --text-body-3: 0.8125rem;
   --text-body-3--line-height: 1.1875rem;
   --text-body-3--font-weight: 600;
+  --text-body-1-bold: 1rem;
+  --text-body-1-bold--line-height: 1.4375rem;
+  --text-body-1-bold--letter-spacing: -0.22px;
+  --text-body-1-bold--font-weight: 700;
+  --text-body-2-bold: 0.9375rem;
+  --text-body-2-bold--line-height: 1.375rem;
+  --text-body-2-bold--letter-spacing: -0.19px;
+  --text-body-2-bold--font-weight: 700;
+  --text-body-3-bold: 0.8125rem;
+  --text-body-3-bold--line-height: 1.1875rem;
+  --text-body-3-bold--letter-spacing: -0.18px;
+  --text-body-3-bold--font-weight: 700;
 }
 
 @theme inline {
@@ -99,6 +111,25 @@
   body {
     @apply bg-ghost text-body-2 text-slate;
   }
+}
+
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring-color, var(--color-blue));
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+}
+
+@utility focus-ring-white {
+  --focus-ring-color: white;
+}
+
+@utility focus-ring-offset-4 {
+  --focus-ring-offset: 4px;
+}
+
+@utility focus-ring-inset {
+  --focus-ring-offset: -2px;
 }
 
 @utility shutter {

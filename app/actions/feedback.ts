@@ -2,30 +2,21 @@
 
 import { updateTag } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
-import { z } from "zod";
 import {
-  deleteFeedback as deleteFeedbackRow,
+  deleteFeedbackRow,
   insertFeedback,
-  updateFeedback as updateFeedbackRow,
+  updateFeedbackRow,
 } from "@/db/mutations";
 import { FEEDBACK_TAG } from "@/db/queries";
+import { feedbackNotFound, serverError } from "@/lib/action-state";
 import {
+  type DeleteFeedbackState,
   type FeedbackFormState,
   parseFeedbackForm,
   parseFeedbackUpdate,
 } from "@/lib/feedback-form";
-
-const feedbackId = z.int().positive();
-
-const failed = {
-  status: "error",
-  message: "Something went wrong. Please try again.",
-} as const;
-
-const notFound = {
-  status: "error",
-  message: "This feedback no longer exists.",
-} as const;
+import { recordId } from "@/lib/ids";
+import { feedbackHref } from "@/lib/routes";
 
 export async function createFeedback(
   formData: FormData,
@@ -39,18 +30,18 @@ export async function createFeedback(
   try {
     id = await insertFeedback(parsed.data);
   } catch {
-    return failed;
+    return serverError;
   }
 
   updateTag(FEEDBACK_TAG);
-  redirect(`/feedback/${id}`, RedirectType.replace);
+  redirect(feedbackHref(id), RedirectType.replace);
 }
 
 export async function updateFeedback(
   id: number,
   formData: FormData,
 ): Promise<FeedbackFormState> {
-  if (!feedbackId.safeParse(id).success) return notFound;
+  if (!recordId.safeParse(id).success) return feedbackNotFound;
 
   const parsed = parseFeedbackUpdate(formData);
   if (!parsed.data) {
@@ -61,24 +52,24 @@ export async function updateFeedback(
   try {
     updated = await updateFeedbackRow(id, parsed.data);
   } catch {
-    return failed;
+    return serverError;
   }
-  if (!updated) return notFound;
+  if (!updated) return feedbackNotFound;
 
   updateTag(FEEDBACK_TAG);
   return { status: "success" };
 }
 
-export type DeleteFeedbackState = { status: "idle" } | typeof failed;
-
 export async function deleteFeedback(id: number): Promise<DeleteFeedbackState> {
-  if (!feedbackId.safeParse(id).success) return failed;
+  if (!recordId.safeParse(id).success) return feedbackNotFound;
 
+  let deleted: boolean;
   try {
-    await deleteFeedbackRow(id);
+    deleted = await deleteFeedbackRow(id);
   } catch {
-    return failed;
+    return serverError;
   }
+  if (!deleted) return feedbackNotFound;
 
   updateTag(FEEDBACK_TAG);
   redirect("/", RedirectType.replace);

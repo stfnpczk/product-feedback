@@ -10,6 +10,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { cacheTag } from "next/cache";
+import { nestComments } from "@/lib/comments";
 import { CURRENT_USER } from "@/lib/current-user";
 import type { RoadmapStatus } from "@/lib/statuses";
 import type { Sort, SuggestionFilters } from "@/lib/suggestion-filters";
@@ -109,26 +110,8 @@ export async function getComments(feedbackId: number) {
   return nestComments(rows);
 }
 
-export type CommentData = {
-  id: number;
-  parentId: number | null;
-  replyingTo: string | null;
-  content: string;
-  author: { name: string; username: string; image: string };
-};
-
-export type CommentNode = CommentData & { replies: CommentData[] };
-
-function nestComments(rows: CommentData[]): CommentNode[] {
-  const topLevel = new Map<number, CommentNode>();
-  for (const row of rows) {
-    if (row.parentId === null) topLevel.set(row.id, { ...row, replies: [] });
-  }
-  for (const row of rows) {
-    if (row.parentId !== null) topLevel.get(row.parentId)?.replies.push(row);
-  }
-  return [...topLevel.values()];
-}
+export type CommentNode = Awaited<ReturnType<typeof getComments>>[number];
+export type CommentData = CommentNode["replies"][number];
 
 export async function getRoadmapCounts() {
   "use cache";

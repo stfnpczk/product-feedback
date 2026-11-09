@@ -8,21 +8,12 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
+import { categories } from "../lib/categories.ts";
+import { statuses } from "../lib/statuses.ts";
 
-export const categoryEnum = pgEnum("category", [
-  "feature",
-  "ui",
-  "ux",
-  "enhancement",
-  "bug",
-]);
+export const categoryEnum = pgEnum("category", categories);
 
-export const statusEnum = pgEnum("status", [
-  "suggestion",
-  "planned",
-  "in-progress",
-  "live",
-]);
+export const statusEnum = pgEnum("status", statuses);
 
 export const users = pgTable("users", {
   id: serial().primaryKey(),

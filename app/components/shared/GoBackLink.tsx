@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useBackNavigation } from "./useBackNavigation";
+import { useBackLink } from "./back-navigation";
 
 const variants = {
-  default: { link: "text-slate focus-visible:outline-blue", arrow: "bg-blue" },
-  onDark: { link: "text-white focus-visible:outline-white", arrow: "bg-white" },
+  default: { link: "text-slate", arrow: "bg-blue" },
+  onDark: { link: "text-white focus-ring-white", arrow: "bg-white" },
 };
 
 export function GoBackLink({
@@ -15,14 +15,14 @@ export function GoBackLink({
   href: string;
   variant?: keyof typeof variants;
 }) {
-  const handleNavigate = useBackNavigation(href);
+  const handleNavigate = useBackLink(href);
   const { link, arrow } = variants[variant];
 
   return (
     <Link
       href={href}
       onNavigate={handleNavigate}
-      className={`flex items-center gap-3.75 text-body-3 font-bold hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 md:text-sm ${link}`}
+      className={`flex items-center gap-3.75 text-body-3 font-bold focus-ring focus-ring-offset-4 hover:underline md:text-sm ${link}`}
     >
       <span
         aria-hidden="true"

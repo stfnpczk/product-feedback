@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { ActionError } from "./action-state";
 import { categories } from "./categories";
 import { statuses } from "./statuses";
 
@@ -31,10 +32,12 @@ export type FieldErrors = Partial<Record<FeedbackField, string>>;
 export type FeedbackFormState =
   | { status: "idle" }
   | { status: "invalid"; fieldErrors: FieldErrors }
-  | { status: "error"; message: string }
+  | ActionError
   | { status: "success" };
 
 export const initialFeedbackFormState: FeedbackFormState = { status: "idle" };
+
+export type DeleteFeedbackState = { status: "idle" } | ActionError;
 
 export type ParsedFeedbackForm<T> =
   | { data: T; fieldErrors?: undefined }

@@ -19,7 +19,7 @@ export function ReplyButton({
       aria-expanded={open}
       aria-controls={open ? replyFormId(commentId) : undefined}
       onClick={() => toggle(commentId)}
-      className="cursor-pointer text-body-3 text-blue hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue"
+      className="cursor-pointer text-body-3 text-blue focus-ring focus-ring-offset-4 hover:underline"
     >
       Reply<span className="sr-only"> to {authorName}</span>
     </button>

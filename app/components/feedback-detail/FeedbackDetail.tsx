@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getComments, getFeedback } from "@/db/queries";
-import { parseFeedbackId } from "@/lib/feedback-id";
+import { parseIdParam } from "@/lib/ids";
+import { editFeedbackHref } from "@/lib/routes";
 import { buttonStyles } from "../shared/button-styles";
 import { FeedbackCard } from "../shared/FeedbackCard";
 import { AddCommentForm } from "./AddCommentForm";
@@ -13,7 +14,7 @@ export async function FeedbackDetail({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const id = parseFeedbackId((await params).id);
+  const id = parseIdParam((await params).id);
   if (id === null) notFound();
 
   const [feedback, comments] = await Promise.all([
@@ -25,10 +26,7 @@ export async function FeedbackDetail({
   return (
     <>
       <DetailTopBar>
-        <Link
-          href={`/feedback/${id}/edit`}
-          className={buttonStyles("secondary")}
-        >
+        <Link href={editFeedbackHref(id)} className={buttonStyles("secondary")}>
           Edit Feedback
         </Link>
       </DetailTopBar>

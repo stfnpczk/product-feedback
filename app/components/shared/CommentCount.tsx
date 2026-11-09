@@ -9,7 +9,7 @@ export function CommentCount({
 }) {
   return (
     <p
-      className={`flex items-center gap-2 text-body-3 font-bold tracking-[-0.18px] text-navy ${className}`}
+      className={`flex items-center gap-2 text-body-3-bold text-navy ${className}`}
     >
       <Image
         src="/assets/shared/icon-comments.svg"

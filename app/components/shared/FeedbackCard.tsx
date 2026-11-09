@@ -47,7 +47,7 @@ export function FeedbackCard({
 
       <CommentCount
         count={commentCount}
-        className="self-center [grid-area:comments] md:text-body-1 md:tracking-[-0.22px]"
+        className="self-center [grid-area:comments] md:text-body-1-bold"
       />
     </article>
   );

@@ -48,11 +48,15 @@ export async function saveUpvote(feedbackId: number, upvoted: boolean) {
 }
 
 export async function insertComment(feedbackId: number, content: string) {
-  await db.insert(comments).values({
-    feedbackId,
-    userId: sql`(${currentUserId})`,
-    content,
-  });
+  const inserted = await db
+    .insert(comments)
+    .values({
+      feedbackId,
+      userId: sql`(${currentUserId})`,
+      content,
+    })
+    .returning({ id: comments.id });
+  return inserted.length > 0;
 }
 
 export async function insertReply(targetCommentId: number, content: string) {
@@ -84,7 +88,7 @@ export async function insertFeedback(input: FeedbackInput) {
   return created.id;
 }
 
-export async function updateFeedback(id: number, input: FeedbackUpdate) {
+export async function updateFeedbackRow(id: number, input: FeedbackUpdate) {
   const updated = await db
     .update(feedback)
     .set(input)
@@ -93,7 +97,7 @@ export async function updateFeedback(id: number, input: FeedbackUpdate) {
   return updated.length > 0;
 }
 
-export async function deleteFeedback(id: number) {
+export async function deleteFeedbackRow(id: number) {
   const deleted = await db
     .delete(feedback)
     .where(eq(feedback.id, id))

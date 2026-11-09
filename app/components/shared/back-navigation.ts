@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-
-const listPaths = ["/", "/roadmap"];
+import { isBackTarget } from "@/lib/back-navigation";
 
 type NavigationEntries = {
   currentEntry: { index: number } | null;
@@ -13,22 +12,10 @@ function previousEntryMatches(href: string) {
   const navigation = (window as { navigation?: NavigationEntries }).navigation;
   const index = navigation?.currentEntry?.index ?? 0;
   const previousUrl = index > 0 ? navigation?.entries()[index - 1]?.url : null;
-  if (!previousUrl) return false;
-
-  const previous = new URL(previousUrl);
-  const target = new URL(href, location.origin);
-  if (
-    previous.origin !== target.origin ||
-    previous.pathname === location.pathname
-  ) {
-    return false;
-  }
-  return target.pathname === "/"
-    ? listPaths.includes(previous.pathname)
-    : previous.pathname === target.pathname;
+  return isBackTarget({ previousUrl, currentUrl: location.href, href });
 }
 
-export function useBackNavigation(href: string) {
+export function useBackLink(href: string) {
   const router = useRouter();
 
   return function handleNavigate(event: { preventDefault(): void }) {
@@ -39,10 +26,10 @@ export function useBackNavigation(href: string) {
   };
 }
 
-export function useNavigateBack(href: string) {
+export function useReturnTo(href: string) {
   const router = useRouter();
 
-  return function navigateBack() {
+  return function returnTo() {
     if (previousEntryMatches(href)) router.back();
     else router.replace(href);
   };

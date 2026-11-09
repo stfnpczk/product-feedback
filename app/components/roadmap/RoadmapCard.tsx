@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { FeedbackSummary } from "@/db/queries";
+import { feedbackHref } from "@/lib/routes";
 import { type RoadmapStatus, roadmapCardLabels } from "@/lib/statuses";
 import { CategoryTag } from "../shared/CategoryTag";
 import { CommentCount } from "../shared/CommentCount";
@@ -42,9 +43,9 @@ export function RoadmapCard({
       </p>
       <FeedbackCardTitle
         title={title}
-        href={`/feedback/${id}`}
+        href={feedbackHref(id)}
         headingLevel="h3"
-        className={`lg:text-h3 lg:tracking-[-0.25px] ${roadmapCardStatusSpacing}`}
+        className={`lg:text-h3 ${roadmapCardStatusSpacing}`}
       />
       <p className="mt-2.25 mb-2 line-clamp-3 text-body-3 font-normal text-pretty lg:mt-1 lg:text-body-1">
         {description}
@@ -57,10 +58,7 @@ export function RoadmapCard({
           upvoted={upvoted}
           className={`gap-2.5 pl-4 ${roadmapCardUpvoteSize}`}
         />
-        <CommentCount
-          count={commentCount}
-          className="lg:text-body-1 lg:tracking-[-0.22px]"
-        />
+        <CommentCount count={commentCount} className="lg:text-body-1-bold" />
       </div>
     </article>
   );

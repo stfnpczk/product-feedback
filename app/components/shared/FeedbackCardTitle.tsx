@@ -13,7 +13,7 @@ export function FeedbackCardTitle({
 }) {
   return (
     <Heading
-      className={`text-body-3 font-bold tracking-[-0.18px] text-navy transition-colors group-has-[a:hover]:text-blue ${className}`}
+      className={`text-body-3-bold text-navy transition-colors group-has-[a:hover]:text-blue ${className}`}
     >
       {href ? (
         <Link

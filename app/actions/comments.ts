@@ -1,57 +1,43 @@
 "use server";
 
 import { updateTag } from "next/cache";
-import { z } from "zod";
 import { insertComment, insertReply } from "@/db/mutations";
 import { FEEDBACK_TAG } from "@/db/queries";
-import { type CommentFormState, commentContent } from "@/lib/comments";
+import { serverError } from "@/lib/action-state";
+import { type CommentFormState, parseComment } from "@/lib/comments";
+import { recordId } from "@/lib/ids";
 
-const id = z.int().positive();
+async function saveComment(
+  formData: FormData,
+  insert: (content: string) => Promise<boolean>,
+): Promise<CommentFormState> {
+  const content = parseComment(formData.get("content"));
+  if (content.error !== undefined) {
+    return { status: "invalid", fieldError: content.error };
+  }
 
-const failed: CommentFormState = {
-  status: "error",
-  message: "Something went wrong. Please try again.",
-};
-
-function parseContent(formData: FormData) {
-  return commentContent.safeParse(formData.get("content") ?? "");
+  try {
+    const saved = await insert(content.data);
+    if (!saved) return serverError;
+  } catch {
+    return serverError;
+  }
+  updateTag(FEEDBACK_TAG);
+  return { status: "success" };
 }
 
 export async function addComment(
   feedbackId: number,
   formData: FormData,
 ): Promise<CommentFormState> {
-  const content = parseContent(formData);
-  if (!content.success) {
-    return { status: "error", message: content.error.issues[0].message };
-  }
-  if (!id.safeParse(feedbackId).success) return failed;
-
-  try {
-    await insertComment(feedbackId, content.data);
-  } catch {
-    return failed;
-  }
-  updateTag(FEEDBACK_TAG);
-  return { status: "success" };
+  if (!recordId.safeParse(feedbackId).success) return serverError;
+  return saveComment(formData, (content) => insertComment(feedbackId, content));
 }
 
 export async function addReply(
   commentId: number,
   formData: FormData,
 ): Promise<CommentFormState> {
-  const content = parseContent(formData);
-  if (!content.success) {
-    return { status: "error", message: content.error.issues[0].message };
-  }
-  if (!id.safeParse(commentId).success) return failed;
-
-  try {
-    const saved = await insertReply(commentId, content.data);
-    if (!saved) return failed;
-  } catch {
-    return failed;
-  }
-  updateTag(FEEDBACK_TAG);
-  return { status: "success" };
+  if (!recordId.safeParse(commentId).success) return serverError;
+  return saveComment(formData, (content) => insertReply(commentId, content));
 }

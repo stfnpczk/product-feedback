@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Mac's LAN IP for testing on a phone
-  allowedDevOrigins: ["192.168.178.117"],
+  allowedDevOrigins: process.env.DEV_ALLOWED_ORIGINS?.split(",") ?? [],
   experimental: {
     agentFeedback: true,
   },

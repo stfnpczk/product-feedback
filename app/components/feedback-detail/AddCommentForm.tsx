@@ -4,6 +4,7 @@ import { useId } from "react";
 import { addComment } from "@/app/actions/comments";
 import { COMMENT_MAX_LENGTH } from "@/lib/comments";
 import { buttonStyles } from "../shared/button-styles";
+import { FormAlert } from "../shared/FormAlert";
 import { CommentTextarea } from "./CommentTextarea";
 import { useCommentForm } from "./useCommentForm";
 
@@ -14,7 +15,8 @@ export function AddCommentForm({ feedbackId }: { feedbackId: number }) {
     state,
     textareaRef,
     content,
-    error,
+    fieldError,
+    serverError,
     isPending,
     handleSubmit,
     handleChange,
@@ -37,7 +39,7 @@ export function AddCommentForm({ feedbackId }: { feedbackId: number }) {
           aria-labelledby={headingId}
           describedBy={counterId}
           placeholder="Type your comment here"
-          error={error}
+          error={fieldError}
         />
         <div className="mt-4 flex items-center justify-between gap-4">
           <p id={counterId} className="text-body-3 font-normal md:text-body-2">
@@ -48,6 +50,7 @@ export function AddCommentForm({ feedbackId }: { feedbackId: number }) {
             Post Comment
           </button>
         </div>
+        <FormAlert className="mt-4">{serverError}</FormAlert>
         <p role="status" className="sr-only">
           {state.status === "success" ? "Comment posted" : ""}
         </p>

@@ -22,9 +22,7 @@ export function Comment({
         className="size-10 rounded-full"
       />
       <div>
-        <h3 className="text-body-3 font-bold tracking-[-0.18px] text-navy md:text-h4">
-          {author.name}
-        </h3>
+        <h3 className="text-body-3-bold text-navy md:text-h4">{author.name}</h3>
         <p className="text-body-3 font-normal md:text-sm">@{author.username}</p>
       </div>
       <ReplyButton commentId={id} authorName={author.name} />

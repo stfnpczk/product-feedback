@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { type Category, categoryLabels } from "@/lib/categories";
+import { categoryFilterOrder, categoryLabels } from "@/lib/categories";
 import {
   type CategoryFilterValue,
   defaultSort,
@@ -9,9 +9,10 @@ import {
 
 const options: { value: CategoryFilterValue; label: string }[] = [
   { value: "all", label: "All" },
-  ...(Object.entries(categoryLabels) as [Category, string][]).map(
-    ([value, label]) => ({ value, label }),
-  ),
+  ...categoryFilterOrder.map((value) => ({
+    value,
+    label: categoryLabels[value],
+  })),
 ];
 
 export async function CategoryFilter({

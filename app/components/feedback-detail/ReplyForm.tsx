@@ -2,6 +2,7 @@
 
 import { addReply } from "@/app/actions/comments";
 import { buttonStyles } from "../shared/button-styles";
+import { FormAlert } from "../shared/FormAlert";
 import { CommentTextarea } from "./CommentTextarea";
 import { replyFormId, useReply } from "./ReplyProvider";
 import { useCommentForm } from "./useCommentForm";
@@ -24,11 +25,18 @@ function OpenReplyForm({
   className = "",
 }: ReplyFormProps) {
   const { close } = useReply();
-  const { textareaRef, content, error, isPending, handleSubmit, handleChange } =
-    useCommentForm(
-      (formData) => addReply(commentId, formData),
-      () => close(commentId),
-    );
+  const {
+    textareaRef,
+    content,
+    fieldError,
+    serverError,
+    isPending,
+    handleSubmit,
+    handleChange,
+  } = useCommentForm(
+    (formData) => addReply(commentId, formData),
+    () => close(commentId),
+  );
 
   return (
     <form
@@ -41,14 +49,14 @@ function OpenReplyForm({
         }
       }}
       noValidate
-      className={`flex flex-col gap-4 md:flex-row md:items-start ${className}`}
+      className={`flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start ${className}`}
     >
       <CommentTextarea
         ref={textareaRef}
         value={content}
         onChange={(event) => handleChange(event.target.value)}
         aria-label={`Reply to ${authorName}`}
-        error={error}
+        error={fieldError}
         autoFocus
         className="md:flex-1"
       />
@@ -59,6 +67,7 @@ function OpenReplyForm({
       >
         Post Reply
       </button>
+      <FormAlert className="md:basis-full">{serverError}</FormAlert>
     </form>
   );
 }

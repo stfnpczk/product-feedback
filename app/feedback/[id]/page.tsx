@@ -17,7 +17,7 @@ export default function FeedbackDetailPage({
   params,
 }: PageProps<"/feedback/[id]">) {
   return (
-    <main className="mx-auto box-content flex max-w-182.5 flex-col gap-6 px-6 pt-6 pb-22 md:px-10 md:pt-14 md:pb-30 lg:pt-20 lg:pb-32">
+    <main className="mx-auto box-content flex max-w-135 flex-col gap-6 px-6 pt-6 pb-22 md:max-w-182.5 md:px-10 md:pt-14 md:pb-30 lg:pt-20 lg:pb-32">
       <Suspense fallback={<FeedbackDetailSkeleton />}>
         <FeedbackDetail params={params} />
       </Suspense>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { mobilePageWidth } from "../shared/layout-styles";
 
 const bar =
   "origin-center transition-[translate,rotate,scale,opacity] duration-300 ease-in-out [transform-box:fill-box] motion-reduce:transition-none";
@@ -91,24 +92,30 @@ export function MobileNav({ children }: { children: React.ReactNode }) {
       <div
         aria-hidden="true"
         onClick={() => close()}
-        className={`fixed inset-x-0 top-18 bottom-0 z-10 bg-black/50 transition-opacity duration-300 motion-reduce:transition-none ${
-          open ? "opacity-100" : "pointer-events-none opacity-0"
+        className={`fixed inset-x-0 top-18 bottom-0 z-10 bg-black/50 transition-[opacity,backdrop-filter] duration-300 motion-reduce:transition-none ${
+          open
+            ? "opacity-100 backdrop-blur-xs"
+            : "pointer-events-none opacity-0"
         }`}
       />
       <div
-        ref={panelRef}
-        id="mobile-drawer"
-        role="region"
-        aria-label="Menu"
-        inert={!open}
-        onClick={(e) => {
-          if ((e.target as Element).closest("a")) close(false);
-        }}
-        className={`fixed top-18 right-0 bottom-0 z-20 flex w-67.75 flex-col gap-6 overflow-y-auto bg-ghost p-6 transition-transform duration-300 ease-in-out motion-reduce:transition-none ${
-          open ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`pointer-events-none fixed inset-x-0 top-18 bottom-0 z-20 mx-auto overflow-clip ${mobilePageWidth}`}
       >
-        {children}
+        <div
+          ref={panelRef}
+          id="mobile-drawer"
+          role="region"
+          aria-label="Menu"
+          inert={!open}
+          onClick={(e) => {
+            if ((e.target as Element).closest("a")) close(false);
+          }}
+          className={`pointer-events-auto absolute inset-y-0 right-0 flex w-67.75 flex-col gap-6 overflow-y-auto bg-ghost p-6 transition-transform duration-300 ease-in-out motion-reduce:transition-none ${
+            open ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

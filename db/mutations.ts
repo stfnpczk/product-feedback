@@ -1,5 +1,5 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
-import { CURRENT_USERNAME } from "@/lib/current-user";
+import { CURRENT_USER } from "@/lib/current-user";
 import type { FeedbackInput, FeedbackUpdate } from "@/lib/feedback-form";
 import { db } from "./index";
 import { comments, feedback, users, votes } from "./schema";
@@ -7,7 +7,7 @@ import { comments, feedback, users, votes } from "./schema";
 const currentUserId = db
   .select({ id: users.id })
   .from(users)
-  .where(eq(users.username, CURRENT_USERNAME));
+  .where(eq(users.username, CURRENT_USER.username));
 
 export async function saveUpvote(feedbackId: number, upvoted: boolean) {
   const changed = db.$with("changed").as(
@@ -19,7 +19,7 @@ export async function saveUpvote(feedbackId: number, upvoted: boolean) {
               .select({ userId: users.id, feedbackId: feedback.id })
               .from(users)
               .innerJoin(feedback, eq(feedback.id, feedbackId))
-              .where(eq(users.username, CURRENT_USERNAME)),
+              .where(eq(users.username, CURRENT_USER.username)),
           )
           .onConflictDoNothing()
           .returning({ feedbackId: votes.feedbackId })

@@ -46,7 +46,7 @@ export function RoadmapCard({
         headingLevel="h3"
         className={`lg:text-h3 lg:tracking-[-0.25px] ${roadmapCardStatusSpacing}`}
       />
-      <p className="mt-2.25 mb-2 text-body-3 font-normal lg:mt-1 lg:text-body-1">
+      <p className="mt-2.25 mb-2 line-clamp-3 text-body-3 font-normal text-pretty lg:mt-1 lg:text-body-1">
         {description}
       </p>
       <CategoryTag category={category} className="mt-auto" />

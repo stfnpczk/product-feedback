@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { neon } from "@neondatabase/serverless";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/neon-http";
+import { CURRENT_USER } from "../lib/current-user.ts";
 import * as schema from "./schema.ts";
 
 type SeedUser = { image: string; name: string; username: string };
@@ -22,7 +23,7 @@ type SeedFeedback = {
   description: string;
   comments?: SeedComment[];
 };
-type SeedData = { currentUser: SeedUser; productRequests: SeedFeedback[] };
+type SeedData = { productRequests: SeedFeedback[] };
 
 const data: SeedData = JSON.parse(
   readFileSync(new URL("./seed-data.json", import.meta.url), "utf8"),
@@ -41,7 +42,7 @@ async function seed() {
 
   // Users: current user plus everyone who commented or replied
   const seedUsers = new Map<string, SeedUser>([
-    [data.currentUser.username, data.currentUser],
+    [CURRENT_USER.username, CURRENT_USER],
   ]);
   for (const request of data.productRequests) {
     for (const comment of request.comments ?? []) {

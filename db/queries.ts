@@ -10,7 +10,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { cacheTag } from "next/cache";
-import { CURRENT_USERNAME } from "@/lib/current-user";
+import { CURRENT_USER } from "@/lib/current-user";
 import type { RoadmapStatus } from "@/lib/statuses";
 import type { Sort, SuggestionFilters } from "@/lib/suggestion-filters";
 import { db } from "./index";
@@ -28,7 +28,7 @@ const upvoted = sql<boolean>`${exists(
     .where(
       and(
         eq(votes.feedbackId, feedback.id),
-        eq(users.username, CURRENT_USERNAME),
+        eq(users.username, CURRENT_USER.username),
       ),
     ),
 )}`;

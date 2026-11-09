@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm exec tsc --noEmit
+      - run: pnpm format:check
+      - run: pnpm test
+
+  e2e:
+    needs: check
+    runs-on: ubuntu-latest
+    env:
+      TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+    steps:
+      - if: env.TEST_DATABASE_URL == ''
+        run: echo "::notice::E2E skipped, TEST_DATABASE_URL secret not set"
+      - if: env.TEST_DATABASE_URL != ''
+        uses: actions/checkout@v4
+      - if: env.TEST_DATABASE_URL != ''
+        uses: pnpm/action-setup@v4
+      - if: env.TEST_DATABASE_URL != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - if: env.TEST_DATABASE_URL != ''
+        run: pnpm install --frozen-lockfile
+      - if: env.TEST_DATABASE_URL != ''
+        run: echo "DATABASE_URL=$TEST_DATABASE_URL" > .env.test
+      - if: env.TEST_DATABASE_URL != ''
+        run: pnpm exec playwright install --with-deps chromium
+      - if: env.TEST_DATABASE_URL != ''
+        run: pnpm test:e2e
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

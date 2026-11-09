@@ -2,6 +2,8 @@
 
 import { type ComponentProps, useId } from "react";
 import { COMMENT_MAX_LENGTH } from "@/lib/comments";
+import { fieldStyles } from "../shared/field-styles";
+import { FieldError } from "../shared/FieldError";
 
 type CommentTextareaProps = ComponentProps<"textarea"> & {
   error?: string;
@@ -25,16 +27,10 @@ export function CommentTextarea({
         maxLength={COMMENT_MAX_LENGTH}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedByIds}
-        className={`block h-20 w-full resize-none rounded-[5px] border bg-ghost p-4 text-body-3 font-normal text-navy placeholder:text-steel focus:outline-none md:px-6 md:text-body-2 ${
-          error ? "border-red" : "border-transparent focus:border-blue"
-        }`}
+        className={`block h-20 resize-none p-4 md:px-6 ${fieldStyles(!!error)}`}
         {...props}
       />
-      {error && (
-        <p id={errorId} className="mt-1 text-sm text-red">
-          {error}
-        </p>
-      )}
+      <FieldError id={errorId}>{error}</FieldError>
     </div>
   );
 }

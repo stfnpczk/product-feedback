@@ -10,7 +10,7 @@ import {
   sortOptions,
   suggestionsHref,
 } from "@/lib/suggestion-filters";
-import { Select } from "./Select";
+import { Select } from "../shared/Select";
 
 const options = sortOptions.map((value) => ({
   value,

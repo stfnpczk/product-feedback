@@ -8,25 +8,34 @@ import {
   useRef,
   useState,
 } from "react";
+import { fieldStyles } from "./field-styles";
 import { useTypeahead } from "./useTypeahead";
+
+const arrowClasses =
+  "h-1.75 w-2.5 shrink-0 mask-[url(/assets/shared/icon-arrow-down.svg)] mask-contain mask-center mask-no-repeat transition-[rotate] duration-300 group-aria-expanded:rotate-180 motion-reduce:transition-none";
 
 export type SelectOption<T extends string> = { value: T; label: string };
 
 type SelectProps<T extends string> = {
-  label: string;
   options: readonly SelectOption<T>[];
   value: T;
   onChange: (value: T) => void;
   disabled?: boolean;
-};
+  name?: string;
+} & (
+  | { variant?: "toolbar"; label: string }
+  | {
+      variant: "field";
+      id?: string;
+      labelledBy: string;
+      describedBy?: string;
+      invalid?: boolean;
+    }
+);
 
-export function Select<T extends string>({
-  label,
-  options,
-  value,
-  onChange,
-  disabled,
-}: SelectProps<T>) {
+export function Select<T extends string>(props: SelectProps<T>) {
+  const { options, value, onChange, disabled, name } = props;
+  const isField = props.variant === "field";
   const id = useId();
   const labelId = `${id}-label`;
   const valueId = `${id}-value`;
@@ -114,13 +123,17 @@ export function Select<T extends string>({
 
   return (
     <>
+      {name && <input type="hidden" name={name} value={value} />}
       <button
         ref={buttonRef}
+        id={isField ? props.id : undefined}
         type="button"
         role="combobox"
         aria-expanded={open}
         aria-controls={listboxId}
-        aria-labelledby={`${labelId} ${valueId}`}
+        aria-labelledby={isField ? props.labelledBy : `${labelId} ${valueId}`}
+        aria-describedby={isField ? props.describedBy : undefined}
+        aria-invalid={isField && props.invalid ? true : undefined}
         aria-activedescendant={open ? optionId(activeIndex) : undefined}
         popoverTarget={listboxId}
         disabled={disabled}
@@ -128,22 +141,33 @@ export function Select<T extends string>({
         onKeyDown={onKeyDown}
         onKeyUp={(e) => e.key === " " && e.preventDefault()}
         style={{ anchorName }}
-        className="group flex h-full items-center text-body-3 font-normal whitespace-nowrap outline-none md:text-sm"
+        className={
+          isField
+            ? `group flex h-12 cursor-pointer items-center justify-between px-4 text-left md:px-6 ${fieldStyles(props.invalid)} ${props.invalid ? "" : "aria-expanded:border-blue"}`
+            : "group flex h-full items-center text-body-3 font-normal whitespace-nowrap outline-none md:text-sm"
+        }
       >
-        <span className="-mx-3 flex h-10 items-center rounded-[10px] px-3 group-focus-visible:outline-2 group-focus-visible:outline-lavender md:h-11">
-          <span className="flex items-center gap-2 transition-opacity group-hover:opacity-75 group-aria-expanded:opacity-75">
-            <span id={labelId} aria-hidden="true">
-              {label}
+        {isField ? (
+          <>
+            <span id={valueId}>{options[selectedIndex].label}</span>
+            <span aria-hidden="true" className={`${arrowClasses} bg-blue`} />
+          </>
+        ) : (
+          <span className="-mx-3 flex h-10 items-center rounded-card px-3 group-focus-visible:outline-2 group-focus-visible:outline-lavender md:h-11">
+            <span className="flex items-center gap-2 transition-opacity group-hover:opacity-75 group-aria-expanded:opacity-75">
+              <span id={labelId} aria-hidden="true">
+                {props.label}
+              </span>
+              <span id={valueId} className="font-bold">
+                {options[selectedIndex].label}
+              </span>
+              <span
+                aria-hidden="true"
+                className={`${arrowClasses} bg-lavender`}
+              />
             </span>
-            <span id={valueId} className="font-bold">
-              {options[selectedIndex].label}
-            </span>
-            <span
-              aria-hidden="true"
-              className="h-1.75 w-2.5 bg-lavender mask-[url(/assets/shared/icon-arrow-down.svg)] mask-contain mask-center mask-no-repeat transition-[rotate] duration-300 group-aria-expanded:rotate-180 motion-reduce:transition-none"
-            />
           </span>
-        </span>
+        )}
       </button>
 
       <ul
@@ -151,7 +175,7 @@ export function Select<T extends string>({
         id={listboxId}
         popover="auto"
         role="listbox"
-        aria-labelledby={labelId}
+        aria-labelledby={isField ? props.labelledBy : labelId}
         onBeforeToggle={(e) => {
           const isOpening = e.newState === "open";
           setOpen(isOpening);
@@ -162,7 +186,7 @@ export function Select<T extends string>({
         }}
         onMouseDown={(e) => e.preventDefault()}
         style={{ positionAnchor: anchorName }}
-        className="inset-auto m-0 mt-4 w-63.75 divide-y divide-navy/15 overflow-visible rounded-[10px] border-0 bg-white p-0 text-body-1 text-slate shadow-dropdown shutter [position-area:bottom_span-right] motion-reduce:transition-none"
+        className={`inset-auto m-0 mt-4 ${isField ? "w-[anchor-size(width)]" : "w-63.75"} divide-y divide-navy/15 overflow-visible rounded-card border-0 bg-white p-0 text-body-1 text-slate shadow-dropdown shutter [position-area:bottom_span-right] motion-reduce:transition-none`}
       >
         {options.map((option, index) => {
           const isSelected = index === selectedIndex;

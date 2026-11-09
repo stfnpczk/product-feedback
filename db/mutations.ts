@@ -1,5 +1,6 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { CURRENT_USERNAME } from "@/lib/current-user";
+import type { FeedbackInput } from "@/lib/feedback-form";
 import { db } from "./index";
 import { comments, feedback, users, votes } from "./schema";
 
@@ -73,4 +74,12 @@ export async function insertReply(targetCommentId: number, content: string) {
     content,
   });
   return true;
+}
+
+export async function insertFeedback(input: FeedbackInput) {
+  const [created] = await db
+    .insert(feedback)
+    .values(input)
+    .returning({ id: feedback.id });
+  return created.id;
 }

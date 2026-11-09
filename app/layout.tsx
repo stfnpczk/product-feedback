@@ -4,7 +4,7 @@ import "./globals.css";
 
 const jost = Jost({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-jost",
 });
 
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={jost.variable}>
+    <html lang="en" className={jost.variable} suppressHydrationWarning>
       <body>{children}</body>
     </html>
   );

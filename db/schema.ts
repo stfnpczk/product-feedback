@@ -58,7 +58,7 @@ export const comments = pgTable("comments", {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
-// Which feedback the (hard-coded) current user has upvoted, for the active upvote state.
+// Upvotes by the hard-coded current user
 export const votes = pgTable(
   "votes",
   {

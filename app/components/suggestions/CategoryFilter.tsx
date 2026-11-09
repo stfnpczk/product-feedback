@@ -1,16 +1,25 @@
 import Link from "next/link";
+import { type Category, categoryLabels } from "@/lib/categories";
+import {
+  type CategoryFilterValue,
+  defaultSort,
+  type SuggestionFilters,
+  suggestionsHref,
+} from "@/lib/suggestion-filters";
 
-const categories = [
+const options: { value: CategoryFilterValue; label: string }[] = [
   { value: "all", label: "All" },
-  { value: "ui", label: "UI" },
-  { value: "ux", label: "UX" },
-  { value: "enhancement", label: "Enhancement" },
-  { value: "bug", label: "Bug" },
-  { value: "feature", label: "Feature" },
+  ...(Object.entries(categoryLabels) as [Category, string][]).map(
+    ([value, label]) => ({ value, label }),
+  ),
 ];
 
-export function CategoryFilter() {
-  const active = "all";
+export async function CategoryFilter({
+  filters,
+}: {
+  filters?: Promise<SuggestionFilters>;
+}) {
+  const current = await filters;
 
   return (
     <nav
@@ -18,12 +27,15 @@ export function CategoryFilter() {
       className="min-h-44.5 rounded-[10px] bg-white p-6 lg:min-h-0"
     >
       <ul className="flex flex-wrap gap-x-2 gap-y-3.5">
-        {categories.map(({ value, label }) => {
-          const isActive = value === active;
+        {options.map(({ value, label }) => {
+          const isActive = value === current?.category;
           return (
             <li key={value}>
               <Link
-                href={value === "all" ? "/" : `/?category=${value}`}
+                href={suggestionsHref({
+                  category: value,
+                  sort: current?.sort ?? defaultSort,
+                })}
                 aria-current={isActive ? "page" : undefined}
                 className={`flex h-7.5 items-center rounded-[10px] px-4 text-body-3 transition-colors ${
                   isActive

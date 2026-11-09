@@ -18,6 +18,8 @@
   --color-red: #d73737;
   --color-red-hover: #e98888;
 
+  --shadow-dropdown: 0 10px 40px -7px rgb(55 63 104 / 0.35);
+
   --text-h1: 1.5rem;
   --text-h1--line-height: 2.1875rem;
   --text-h1--letter-spacing: -0.33px;
@@ -50,5 +52,38 @@
 @layer base {
   body {
     @apply bg-ghost text-body-2 text-slate;
+  }
+}
+
+@utility shutter {
+  --shutter-up: inset(0 -3rem 100% -3rem);
+  clip-path: var(--shutter-up);
+  perspective: 40rem;
+  transition:
+    clip-path 200ms cubic-bezier(0.55, 0, 1, 0.45),
+    display 200ms allow-discrete,
+    overlay 200ms allow-discrete;
+
+  &:popover-open {
+    clip-path: inset(0 -3rem -3rem -3rem);
+    transition-duration: 400ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+
+    @starting-style {
+      clip-path: var(--shutter-up);
+    }
+  }
+}
+
+@utility shutter-slat {
+  transform-origin: top;
+  transition:
+    rotate 300ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--index) * 60ms),
+    opacity 300ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--index) * 60ms),
+    color 150ms;
+
+  @starting-style {
+    rotate: x -90deg;
+    opacity: 0;
   }
 }

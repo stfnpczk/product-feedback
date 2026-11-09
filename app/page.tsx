@@ -1,23 +1,38 @@
+import { Suspense } from "react";
+import { parseSuggestionFilters } from "@/lib/suggestion-filters";
 import { CategoryFilter } from "./components/suggestions/CategoryFilter";
 import { Header } from "./components/suggestions/Header";
 import { RoadmapSummary } from "./components/suggestions/RoadmapSummary";
-import { SuggestionsToolbar } from "./components/suggestions/SuggestionsToolbar";
+import {
+  Suggestions,
+  SuggestionsFallback,
+} from "./components/suggestions/Suggestions";
 
-export default function SuggestionsPage() {
+export default function SuggestionsPage({ searchParams }: PageProps<"/">) {
+  const filters = searchParams.then(parseSuggestionFilters);
+
+  const categoryFilter = (
+    <Suspense fallback={<CategoryFilter />}>
+      <CategoryFilter filters={filters} />
+    </Suspense>
+  );
+
   return (
     <div className="md:px-10 md:pt-14 lg:mx-auto lg:flex lg:max-w-297.5 lg:gap-7.5 lg:pt-23.5">
       <div className="max-md:contents md:grid md:grid-cols-3 md:gap-2.5 lg:flex lg:w-63.75 lg:shrink-0 lg:flex-col lg:gap-6">
         <Header>
-          <CategoryFilter />
+          {categoryFilter}
           <RoadmapSummary />
         </Header>
         <div className="hidden md:contents">
-          <CategoryFilter />
+          {categoryFilter}
           <RoadmapSummary />
         </div>
       </div>
-      <main className="md:mt-10 lg:mt-0 lg:flex-1">
-        <SuggestionsToolbar />
+      <main className="pb-14 md:mt-10 md:pb-28 lg:mt-0 lg:flex-1 lg:pb-32">
+        <Suspense fallback={<SuggestionsFallback />}>
+          <Suggestions filters={filters} />
+        </Suspense>
       </main>
     </div>
   );

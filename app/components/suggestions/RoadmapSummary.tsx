@@ -1,13 +1,24 @@
 import Link from "next/link";
 import { useId } from "react";
+import { getRoadmapCounts } from "@/db/queries";
 
 const statuses = [
-  { label: "Planned", count: 2, dot: "bg-peach" },
-  { label: "In-Progress", count: 3, dot: "bg-purple" },
-  { label: "Live", count: 1, dot: "bg-sky" },
-];
+  { key: "planned", label: "Planned", dot: "bg-peach" },
+  { key: "in-progress", label: "In-Progress", dot: "bg-purple" },
+  { key: "live", label: "Live", dot: "bg-sky" },
+] as const;
 
-export function RoadmapSummary() {
+export async function RoadmapSummary() {
+  const counts = await getRoadmapCounts();
+
+  return <RoadmapSummaryCard counts={counts} />;
+}
+
+function RoadmapSummaryCard({
+  counts,
+}: {
+  counts: Awaited<ReturnType<typeof getRoadmapCounts>>;
+}) {
   const titleId = useId();
 
   return (
@@ -27,11 +38,11 @@ export function RoadmapSummary() {
         </Link>
       </div>
       <ul className="mt-6 flex flex-col gap-2">
-        {statuses.map(({ label, count, dot }) => (
-          <li key={label} className="flex items-center gap-4 text-body-1">
+        {statuses.map(({ key, label, dot }) => (
+          <li key={key} className="flex items-center gap-4 text-body-1">
             <span aria-hidden="true" className={`size-2 rounded-full ${dot}`} />
             <span>{label}</span>
-            <span className="ml-auto font-bold">{count}</span>
+            <span className="ml-auto font-bold">{counts[key]}</span>
           </li>
         ))}
       </ul>

@@ -1,16 +1,9 @@
-import { z } from "zod";
 import type { ActionError } from "./action-state";
+import { requiredText } from "./text";
 
 export const COMMENT_MAX_LENGTH = 250;
 
-export const commentContent = z
-  .string()
-  .trim()
-  .min(1, "Can't be empty")
-  .max(
-    COMMENT_MAX_LENGTH,
-    `Can't be longer than ${COMMENT_MAX_LENGTH} characters`,
-  );
+export const commentContent = requiredText(COMMENT_MAX_LENGTH);
 
 export function parseComment(content: FormDataEntryValue | null) {
   const result = commentContent.safeParse(content ?? "");

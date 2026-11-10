@@ -28,6 +28,11 @@ describe("commentContent", () => {
       `Can't be longer than ${COMMENT_MAX_LENGTH} characters`,
     );
   });
+
+  it("counts a CRLF line break as one character", () => {
+    const input = `${"a".repeat(COMMENT_MAX_LENGTH - 2)}\r\nb`;
+    expect(commentContent.parse(input)).toBe(input.replace("\r\n", "\n"));
+  });
 });
 
 describe("parseComment", () => {

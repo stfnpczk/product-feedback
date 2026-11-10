@@ -2,17 +2,10 @@ import { z } from "zod";
 import type { ActionError } from "./action-state";
 import { categories } from "./categories";
 import { statuses } from "./statuses";
+import { requiredText } from "./text";
 
 export const TITLE_MAX_LENGTH = 100;
 export const DESCRIPTION_MAX_LENGTH = 500;
-
-function requiredText(max: number) {
-  return z
-    .string()
-    .trim()
-    .min(1, "Can't be empty")
-    .max(max, `Can't be longer than ${max} characters`);
-}
 
 export const feedbackInput = z.object({
   title: requiredText(TITLE_MAX_LENGTH),

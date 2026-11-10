@@ -65,6 +65,13 @@ describe("parseFeedbackForm", () => {
     });
   });
 
+  it("counts CRLF line breaks in the description as one character", () => {
+    const description = `${"a".repeat(DESCRIPTION_MAX_LENGTH - 2)}\r\nb`;
+    expect(parseFeedbackForm(formData({ ...valid, description }))).toEqual({
+      data: { ...valid, description: description.replace("\r\n", "\n") },
+    });
+  });
+
   it("measures length after trimming", () => {
     const title = ` ${"a".repeat(TITLE_MAX_LENGTH)} `;
     expect(parseFeedbackForm(formData({ ...valid, title })).data?.title).toBe(

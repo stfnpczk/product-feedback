@@ -32,7 +32,6 @@ export const feedback = pgTable("feedback", {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
-// Replies are comments with a parentId; replyingTo holds the username being answered.
 export const comments = pgTable("comments", {
   id: serial().primaryKey(),
   feedbackId: integer()
@@ -49,7 +48,6 @@ export const comments = pgTable("comments", {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
-// Upvotes by the hard-coded current user
 export const votes = pgTable(
   "votes",
   {

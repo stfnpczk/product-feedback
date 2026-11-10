@@ -60,7 +60,6 @@ export function MobileNav({ children }: { children: React.ReactNode }) {
       setOpen(false);
       button?.focus();
     };
-    // Matches Tailwind's md breakpoint, where the drawer is hidden
     const desktop = window.matchMedia("(min-width: 48rem)");
     const onResize = () => {
       if (desktop.matches) setOpen(false);
@@ -76,7 +75,14 @@ export function MobileNav({ children }: { children: React.ReactNode }) {
   }, [open]);
 
   return (
-    <div className="md:hidden">
+    <div
+      className="md:hidden"
+      onBlur={(e) => {
+        if (e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) {
+          setOpen(false);
+        }
+      }}
+    >
       <button
         ref={buttonRef}
         type="button"

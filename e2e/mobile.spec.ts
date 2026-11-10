@@ -20,6 +20,22 @@ test("opens the menu drawer and closes it with Escape", async ({ page }) => {
   await expect(menuButton).toHaveAttribute("aria-expanded", "false");
 });
 
+test("closes the menu drawer when focus tabs out of it", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open menu" }).click();
+  const drawer = page.getByRole("region", { name: "Menu" });
+  await expect(drawer).toBeInViewport({ ratio: 1 });
+
+  await drawer.getByRole("link", { name: "View" }).focus();
+  await page.keyboard.press("Tab");
+
+  await expect(page.getByRole("button", { name: "Open menu" })).toHaveAttribute(
+    "aria-expanded",
+    "false",
+  );
+  await expect(drawer).not.toBeInViewport();
+});
+
 test("switches roadmap tabs through the URL", async ({ page }) => {
   await page.goto("/roadmap");
   const tabs = page.getByRole("navigation", { name: "Roadmap status" });

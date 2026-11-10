@@ -41,7 +41,7 @@ There is no authentication by design. Every action runs as a hard-coded "Demo Us
 
 ### Links
 
-- [Frontend Mentor - solution URL](https://www.frontendmentor.io/solutions/your-solution-url)
+- [Frontend Mentor - solution URL](https://www.frontendmentor.io/solutions/product-feedback-app-2aS9hcLLUM)
 - [Live site](https://product-feedback-app-rho-nine.vercel.app)
 
 ## My process
